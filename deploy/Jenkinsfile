@@ -21,10 +21,15 @@ pipeline {
         }
 
         stage('Prepare Ansible For Execution') {
-            steps {
-                sh 'echo ${WORKSPACE}'
-                sh 'sed -i "3 a roles_path=${WORKSPACE}/roles" ${WORKSPACE}/deploy/ansible.cfg'
-            }
+    steps {
+        script {
+            def cfgPath = "${WORKSPACE}/deploy/ansible.cfg"
+            sh """
+            if ! grep -q 'roles_path=${WORKSPACE}/roles' ${cfgPath}; then
+                echo 'roles_path=${WORKSPACE}/roles' >> ${cfgPath}
+            fi
+            """
+        }
         }
 
         stage('Test SSH Connection') {
