@@ -2,5 +2,5 @@
 - hosts: nginx
   become: yes
   roles:
-    - role: nginx
-      when: enable_nginx_lb | bool and load_balancer_is_required | bool
+  - role: nginx
+  when: enable_nginx_lb | bool and load_balancer_is_required | bool
