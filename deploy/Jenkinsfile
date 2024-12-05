@@ -44,7 +44,8 @@ pipeline {
                         disableHostKeyChecking: true,
                         installation: 'ansible',
                         inventory: "${WORKSPACE}/inventory/dev.yml",
-                        playbook: "${WORKSPACE}/playbooks/site.yml"
+                        playbook: "${WORKSPACE}/playbooks/site.yml",
+                        extraVars: ['ansible_ssh_extra_args': '-vvvv'] // Enable verbose output
                     )
                 }
             }
