@@ -21,7 +21,7 @@ pipeline {
         }
 
         stage('Prepare Ansible For Execution') {
-    steps {
+        steps {
         script {
             def cfgPath = "${WORKSPACE}/deploy/ansible.cfg"
             sh """
@@ -29,6 +29,7 @@ pipeline {
                 echo 'roles_path=${WORKSPACE}/roles' >> ${cfgPath}
             fi
             """
+        }
         }
         }
 
