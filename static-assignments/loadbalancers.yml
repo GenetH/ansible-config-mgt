@@ -1,4 +1,4 @@
 - hosts: nginx
   roles:
-    - { role: nginx, when: enable_nginx_lb and load_balancer_is_required }
-    
+    - role: nginx
+      when: (enable_nginx_lb | bool) and (load_balancer_is_required | bool)
