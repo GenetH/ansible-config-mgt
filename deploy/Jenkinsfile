@@ -49,20 +49,17 @@ pipeline {
 
         stage('Run Ansible playbook') {
             steps {
-                sshagent(['private-key']) { 
+                sshagent(['private-key']) {
                     ansiblePlaybook(
+                        playbook: "${WORKSPACE}/playbooks/site.yml",
+                        inventory: "${WORKSPACE}/inventory/${inventory}.yml",
                         become: true,
-                        credentialsId: 'private-key', // Replace with your Jenkins credential ID
-                        disableHostKeyChecking: true,
-                        installation: 'ansible',
-                        inventory: "${WORKSPACE}/inventory/dev.yml",
-                        inventory: "${WORKSPACE}/inventory/${inventory}.yml"
+                        credentialsId: 'private-key'
 
                     )
                 }
             }
         }
-
         stage('Clean Workspace after build') {
             steps {
                 cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenUnstable: true, deleteDirs: true)
