@@ -1,11 +1,38 @@
-- name: Perform installation
-  ansible.builtin.include_tasks: "install.yml"
-  when:
-    - artifactory_enabled
-    - not artifactory_upgrade_only
+---
+- name: Install necessary packages
+  ansible.builtin.apt:
+    name:
+      - gnupg2
+      - wget
+      - unzip
+    state: present
+    update_cache: yes
 
-- name: Perform upgrade
-  ansible.builtin.include_tasks: "upgrade.yml"
-  when:
-    - artifactory_enabled
-    - artifactory_upgrade_only
+- name: Download JFrog GPG key
+  ansible.builtin.command: wget -qO - https://api.bintray.com/orgs/jfrog/keys/gpg/public.key
+  register: gpg_key
+
+- name: Add JFrog GPG key
+  ansible.builtin.command: apt-key add -
+  args:
+    stdin: "{{ gpg_key.stdout }}"
+
+- name: Add the JFrog Artifactory repository
+  ansible.builtin.apt_repository:
+    repo: deb https://jfrog.bintray.com/artifactory-debs bionic main
+    state: present
+
+- name: Update the repository cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install JFrog Artifactory OSS
+  ansible.builtin.apt:
+    name: jfrog-artifactory-oss
+    state: present
+
+- name: Start and enable Artifactory service
+  ansible.builtin.service:
+    name: artifactory
+    state: started
+    enabled: yes
