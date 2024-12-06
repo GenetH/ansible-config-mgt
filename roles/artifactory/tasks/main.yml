@@ -8,10 +8,13 @@
     state: present
     update_cache: yes
 
-- name: Download JFrog GPG key
-  ansible.builtin.command: wget -qO - https://api.bintray.com/orgs/jfrog/keys/gpg/public.key
-  register: gpg_key
 
+- name: Download JFrog GPG key
+  ansible.builtin.get_url:
+    url: "https://releases.jfrog.io/artifactory/api/gpg/key/public"
+    dest: /usr/share/keyrings/jfrog.gpg
+    mode: '0644'
+    
 - name: Add JFrog GPG key
   ansible.builtin.command: apt-key add -
   args:
@@ -19,9 +22,9 @@
 
 - name: Add the JFrog Artifactory repository
   ansible.builtin.apt_repository:
-    repo: deb https://jfrog.bintray.com/artifactory-debs bionic main
+    repo: "deb [signed-by=/usr/share/keyrings/jfrog.gpg] https://releases.jfrog.io/artifactory/artifactory-debs focal main"
     state: present
-
+    
 - name: Update the repository cache
   ansible.builtin.apt:
     update_cache: yes
