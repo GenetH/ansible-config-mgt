@@ -14,11 +14,6 @@
     url: "https://releases.jfrog.io/artifactory/api/gpg/key/public"
     dest: /usr/share/keyrings/jfrog.gpg
     mode: '0644'
-    
-- name: Add JFrog GPG key
-  ansible.builtin.command: apt-key add -
-  args:
-    stdin: "{{ gpg_key.stdout }}"
 
 - name: Add the JFrog Artifactory repository
   ansible.builtin.apt_repository:
